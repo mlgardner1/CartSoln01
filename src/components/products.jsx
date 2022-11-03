@@ -1,6 +1,6 @@
-import React from "react";
-import * as ReactBootstrap from 'react-bootstrap';
-import axios from "axios";
+import * as React from "react";
+import * as ReactBootstrap from "react-bootstrap";
+import * as axios from "axios";
 import {
     Card,
     Accordion,
@@ -14,14 +14,15 @@ import {
 
 // simulate getting products from DataBase
 const products = [
-    { name: "Apples_:", country: "Italy", cost: 3, instock: 10 },
-    { name: "Oranges:", country: "Spain", cost: 4, instock: 3 },
-    { name: "Beans__:", country: "USA", cost: 2, instock: 5 },
-    { name: "Cabbage:", country: "USA", cost: 1, instock: 8 },
+    { name: "Apples", country: "Italy", cost: 3, instock: 10 },
+    { name: "Oranges", country: "Spain", cost: 4, instock: 3 },
+    { name: "Beans", country: "USA", cost: 2, instock: 5 },
+    { name: "Cabbage", country: "USA", cost: 1, instock: 8 },
   ];
   //=========Cart=============
   const Cart = (props) => {
     const { Card, Accordion, Button } = ReactBootstrap;
+    let list = null;
     let data = props.location.data ? props.location.data : products;
     console.log(`data:${JSON.stringify(data)}`);
   
@@ -47,7 +48,7 @@ const products = [
           const result = await axios(url);
           console.log("FETCH FROM URl");
           if (!didCancel) {
-            dispatch({ type: "FETCH_SUCCESS", payload: result.data });
+            dispatch({ type: "FETCH_SUCCESS", payload: result.data.data });
           }
         } catch (error) {
           if (!didCancel) {
@@ -92,7 +93,7 @@ const products = [
     const [items, setItems] = React.useState(products);
     const [cart, setCart] = React.useState([]);
     const [total, setTotal] = React.useState(0);
-
+    //const { Card, Accordion, Button, Container, Row, Col, Image, Input } = ReactBootstrap;
     const { Fragment, useState, useEffect, useReducer } = React;
     const [query, setQuery] = useState("http://localhost:1337/products");
     const [{ data, isLoading, isError }, doFetch] = useDataApi(
@@ -105,18 +106,18 @@ const products = [
     // Fetch Data
     const addToCart = (e) => {
       let name = e.target.name;
-      let item = items.filter((item) => item.name == name);
-      if (item[0].instock == 0) return;
+      let item = items.filter((item) => item.name === name);
+      if (item[0].instock === 0) return;
       item[0].instock = item[0].instock -1;
       console.log(`add to Cart ${JSON.stringify(item)}`);
       setCart([...cart, ...item]);
       //doFetch(query);
     };
     const deleteCartItem = (delIndex) => {
-      let newCart = cart.filter((item, i) => delIndex != i);
-      let target = cartfilter((item, index) => delIndex == index);
-      letnewItems = items.map((item, index) => {
-        if (item.name == target[0].name) item.instock = intem.instock + 1;
+      let newCart = cart.filter((item, i) => delIndex !==+ i);
+      let target = cart.filter((item, index) => delIndex ===+ index);
+      let newItems = items.map((item, index) => {
+        if (item.name ===+ target[0].name) item.instock = item.instock + 1;
         return item;
       });
       setCart(newCart);
@@ -132,23 +133,28 @@ const products = [
         <li key={index}>
           <Image src={uhit} width={70} roundedCircle></Image>
           <Button variant="primary" size="large">
-            {item.name}:{item.cost}-Stock={item.instock}
+            {item.name}:${item.cost}, Stock={item.instock}
           </Button>
-          <input name={item.name} type="submit" onClick={addToCart}></input>
+          <input name={item.name} type="submit" value="Add to cart" onClick={addToCart}></input>
         </li>
       );
     });
     let cartList = cart.map((item, index) => {
       return (
-        <Accordion.Item key={1+index} eventKey={1 + index}>
-        <Accordion.Header>
-          {item.name}
-        </Accordion.Header>
-        <Accordion.Body onClick={() => deleteCartItem(index)}
-          eventKey={1 + index}>
-          $ {item.cost} from {item.country}
-        </Accordion.Body>
-      </Accordion.Item>
+        <Card key ={index}>
+          <Card.Header>
+            {/* <Accordion.Toggle as={Button} variant="link" eventKey={1 + index}>
+            </Accordion.Toggle> */}
+            <div>{item.name}</div>
+          </Card.Header>
+          {/* <Accordion.CollapseonClick={() => deleteCartItem(index)}
+          eventKey={1 + index}
+          > */}
+          <Card.Body>
+            $ {item.cost} (from {item.country})
+          </Card.Body>
+          {/* </Accordion.Collapse> */}
+        </Card>
       );
     });
   
@@ -217,4 +223,4 @@ const products = [
       </Container>
     );
   };
-  export default products;
+  export default Products;
